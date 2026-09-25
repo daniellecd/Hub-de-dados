@@ -1,0 +1,55 @@
+# Contrato da tabela de domínio cnaes (arquivo *.CNAECSV, parte única).
+formato_contrato: 1
+
+identidade:
+  fonte: rfb
+  base: cnpj
+  entidade: cnaes
+
+versao: 1
+descricao: Tabela de atividades econômicas (CNAE) da Receita Federal.
+
+selecao:
+  arquivo: "*.CNAECSV"
+  quantidade_partes: 1
+
+leitura:
+  separador: ";"
+  aspas: '"'
+  escape: '"'
+  codificacao: iso-8859-1
+  cabecalho: false
+  tolerancia_malformadas: 0.0
+
+transformacoes_padrao:
+  - aparar
+  - vazio_como_nulo
+
+colunas:
+  - nome: codigo
+    tipo: texto
+    nulavel: false
+    descricao: Código da atividade econômica.
+  - nome: descricao
+    tipo: texto
+    nulavel: false
+    descricao: Nome da atividade econômica.
+
+chave: [codigo]
+
+acoes_padrao:
+  linha_malformada: BLOQUEIA_PUBLICACAO
+  nulidade: QUARENTENA_E_ALERTA
+  conversao: QUARENTENA_E_ALERTA
+  chave_nula: QUARENTENA_E_ALERTA
+  chave_duplicada: QUARENTENA_GRUPO
+  dominio: QUARENTENA_E_ALERTA
+
+documentacao:
+  estado: PROVISORIO_DOCUMENTAL
+  fonte_documental: Novo layout dos dados abertos do CNPJ (dez/2021), tabela de domínio CNAEs.
+  pendencias:
+    - descricao: Arquivo sem cabeçalho; confirmar as duas colunas, a codificação e o dialeto no arquivo real.
+      impede: VALIDADO_FISICO
+    - descricao: Confirmar o nome físico do arquivo (padrão *.CNAECSV).
+      impede: VALIDADO_FISICO

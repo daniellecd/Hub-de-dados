@@ -1,0 +1,236 @@
+# Contrato da entidade obras (arquivo CNO.CSV) do Cadastro Nacional de Obras.
+# Escrito a partir do layout oficial; dialeto e cabeçalho ainda sem
+# evidência física (estado PROVISORIO_DOCUMENTAL).
+formato_contrato: 1
+
+identidade:
+  fonte: rfb
+  base: cno
+  entidade: obras
+
+versao: 1
+descricao: >-
+  Obras de construção civil inscritas no Cadastro Nacional de Obras, com
+  responsável, endereço, área e situação.
+
+selecao:
+  arquivo: cno.csv
+  quantidade_partes: 1
+
+leitura:
+  separador: ","
+  aspas: '"'
+  escape: '"'
+  codificacao: utf-8
+  cabecalho: true
+  tolerancia_malformadas: 0.001
+
+reconciliacao:
+  total_declarado:
+    entidade: totais
+    coluna: total_obras
+
+transformacoes_padrao:
+  - aparar
+  - vazio_como_nulo
+
+colunas:
+  - nome: cno
+    cabecalho: CNO
+    tipo: texto
+    nulavel: false
+    transformacoes: [somente_digitos, vazio_como_nulo]
+    descricao: Número de inscrição da obra no CNO.
+  - nome: codigo_pais
+    cabecalho: Código do país
+    tipo: texto
+    dominio: pais_rfb
+    descricao: Código do país da obra.
+  - nome: nome_pais
+    cabecalho: Nome do País
+    tipo: texto
+    descricao: Nome do país da obra.
+  - nome: data_inicio
+    cabecalho: Data de início
+    tipo: data
+    formato: AAAA-MM-DD
+    descricao: Data de início da obra.
+  - nome: data_inicio_responsabilidade
+    cabecalho: Data de início da responsabilidade
+    tipo: data
+    formato: AAAA-MM-DD
+    descricao: Data de início do período de responsabilidade da obra.
+  - nome: data_registro
+    cabecalho: Data de registro
+    tipo: data
+    formato: AAAA-MM-DD
+    descricao: Data de registro da obra.
+  - nome: cno_vinculado
+    cabecalho: CNO vinculado
+    tipo: texto
+    transformacoes: [somente_digitos, vazio_como_nulo]
+    descricao: Número da inscrição vinculada da obra.
+  - nome: cep
+    cabecalho: CEP
+    tipo: texto
+    descricao: CEP da obra (somente Brasil).
+  - nome: ni_responsavel
+    cabecalho: NI do responsável
+    tipo: texto
+    descricao: >-
+      Número de identificação do responsável pela obra; vem em branco
+      quando o responsável é pessoa física (CPF).
+  - nome: qualificacao_responsavel
+    cabecalho: Qualificação do responsável
+    tipo: texto
+    transformacoes:
+      - preencher_esquerda: {tamanho: 4, caractere: "0"}
+    dominio: qualificacao_responsavel
+    descricao: Código da qualificação do responsável pela obra.
+  - nome: nome
+    cabecalho: Nome
+    tipo: texto
+    descricao: Nome da obra.
+  - nome: codigo_municipio
+    cabecalho: Código do município
+    tipo: texto
+    transformacoes:
+      - preencher_esquerda: {tamanho: 4, caractere: "0"}
+    dominio: municipio_rfb
+    descricao: Código do município da obra na tabela da Receita (TOM), não IBGE.
+  - nome: nome_municipio
+    cabecalho: Nome do município
+    tipo: texto
+    descricao: Nome do município da obra.
+  - nome: tipo_logradouro
+    cabecalho: Tipo de logradouro
+    tipo: texto
+    descricao: Tipo de logradouro.
+  - nome: logradouro
+    cabecalho: Logradouro
+    tipo: texto
+    descricao: Logradouro da obra.
+  - nome: numero_logradouro
+    cabecalho: Número do logradouro
+    tipo: texto
+    descricao: Número do logradouro.
+  - nome: bairro
+    cabecalho: Bairro
+    tipo: texto
+    descricao: Bairro da obra.
+  - nome: estado
+    cabecalho: Estado
+    tipo: texto
+    descricao: Estado (unidade da federação) da obra.
+  - nome: caixa_postal
+    cabecalho: Caixa Postal
+    tipo: texto
+    descricao: Caixa postal no exterior.
+  - nome: complemento
+    cabecalho: Complemento
+    tipo: texto
+    descricao: Complemento do endereço.
+  - nome: unidade_medida
+    cabecalho: Unidade de medida
+    tipo: texto
+    descricao: Unidade de medida da área da obra.
+  - nome: area_total
+    cabecalho: Área total
+    tipo: decimal
+    precisao: 18
+    escala: 2
+    separador_decimal: "."
+    descricao: Área total da obra, na unidade de medida informada.
+  - nome: situacao
+    cabecalho: Situação
+    tipo: texto
+    transformacoes:
+      - preencher_esquerda: {tamanho: 2, caractere: "0"}
+    dominio: situacao_obra
+    descricao: Código da situação da obra.
+  - nome: data_situacao
+    cabecalho: Data da situação
+    tipo: data
+    formato: AAAA-MM-DD
+    descricao: Data da situação da obra.
+  - nome: nome_empresarial
+    cabecalho: Nome empresarial
+    tipo: texto
+    descricao: >-
+      Nome empresarial do responsável pela obra; vem em branco quando o
+      responsável é pessoa física.
+  - nome: localizacao
+    cabecalho: Localização
+    tipo: texto
+    descricao: Código da localização.
+
+chave: [cno]
+
+dominios:
+  qualificacao_responsavel:
+    tipo: literal
+    valores:
+      "0053": Pessoa Jurídica Construtora
+      "0057": Dono da Obra
+      "0064": Incorporador de Construção Civil
+      "0070": Proprietário do Imóvel
+      "0109": Consórcio
+      "0110": Construção em nome coletivo
+      "0111": Sociedade Líder de Consórcio
+    coluna_descricao: qualificacao_responsavel_descricao
+  situacao_obra:
+    tipo: literal
+    valores:
+      "01": Nula
+      "02": Ativa
+      "03": Suspensa
+      "14": Paralisada
+      "15": Encerrada
+    coluna_descricao: situacao_descricao
+  municipio_rfb:
+    tipo: referencia
+    tabela: {fonte: rfb, base: cnpj, entidade: municipios}
+    coluna: codigo
+  pais_rfb:
+    tipo: referencia
+    tabela: {fonte: rfb, base: cnpj, entidade: paises}
+    coluna: codigo
+
+regras:
+  - id: cno_com_12_digitos
+    descricao: O número do CNO tem 12 dígitos.
+    dimensao: Conformity
+    expressao: length(cno) = 12
+    colunas_referenciadas: [cno]
+    acao: QUARENTENA_E_ALERTA
+  - id: area_total_nao_negativa
+    descricao: A área total não pode ser negativa.
+    dimensao: Accuracy
+    expressao: area_total IS NULL OR area_total >= 0
+    colunas_referenciadas: [area_total]
+    acao: ALERTA
+
+acoes_padrao:
+  linha_malformada: QUARENTENA_E_ALERTA
+  nulidade: QUARENTENA
+  conversao: QUARENTENA_E_ALERTA
+  chave_nula: QUARENTENA
+  chave_duplicada: QUARENTENA_GRUPO
+  dominio: QUARENTENA_E_ALERTA
+
+documentacao:
+  estado: PROVISORIO_DOCUMENTAL
+  fonte_documental: CNO - Cadastro Nacional de Obras, layout do arquivo CNO.CSV (Receita Federal).
+  pendencias:
+    - descricao: Confirmar separador, aspas, codificação e presença de cabeçalho no arquivo real.
+      impede: VALIDADO_FISICO
+    - descricao: Confirmar os nomes do cabeçalho; os declarados vêm dos atributos do layout.
+      impede: VALIDADO_FISICO
+    - descricao: O layout informa datas com tamanho 8 e formato AAAA-MM-DD; confirmar o formato físico.
+      impede: VALIDADO_FISICO
+    - descricao: Confirmar separador decimal e escala de Área total.
+      impede: VALIDADO_FISICO
+    - descricao: Confirmar se o total de CNO_TOTAIS.CSV conta registros sem o cabeçalho.
+      impede: VALIDADO_FISICO
+    - descricao: Calibrar a tolerância de linhas malformadas com a evidência física.
+      impede: APROVADO

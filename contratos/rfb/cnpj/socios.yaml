@@ -1,0 +1,121 @@
+# Contrato da entidade socios (arquivos *.SOCIOCSV, dez partes).
+# CPF de sócio e de representante vêm descaracterizados pela fonte.
+formato_contrato: 1
+
+identidade:
+  fonte: rfb
+  base: cnpj
+  entidade: socios
+
+versao: 1
+descricao: Quadro de sócios e administradores, com representante legal e faixa etária.
+
+selecao:
+  arquivo: "*.SOCIOCSV"
+  quantidade_partes: 10
+
+leitura:
+  separador: ";"
+  aspas: '"'
+  escape: '"'
+  codificacao: iso-8859-1
+  cabecalho: false
+  tolerancia_malformadas: 0.0001
+
+transformacoes_padrao:
+  - aparar
+  - vazio_como_nulo
+
+colunas:
+  - nome: cnpj_basico
+    tipo: texto
+    nulavel: false
+    descricao: Número base de inscrição no CNPJ.
+  - nome: identificador_socio
+    tipo: texto
+    dominio: identificador_socio
+    descricao: Código do identificador de sócio.
+  - nome: nome_socio_razao_social
+    tipo: texto
+    descricao: Nome do sócio pessoa física ou razão social do sócio pessoa jurídica.
+  - nome: cpf_cnpj_socio
+    tipo: texto
+    descricao: CPF (descaracterizado pela fonte) ou CNPJ do sócio.
+  - nome: qualificacao_socio
+    tipo: texto
+    dominio: qualificacao
+    descricao: Código da qualificação do sócio.
+  - nome: data_entrada_sociedade
+    tipo: data
+    formato: AAAAMMDD
+    transformacoes:
+      - nulo_se: {valores: ["0", "00000000"]}
+    descricao: Data de entrada na sociedade.
+  - nome: pais
+    tipo: texto
+    dominio: pais
+    descricao: Código do país do sócio estrangeiro.
+  - nome: representante_legal
+    tipo: texto
+    descricao: CPF do representante legal (descaracterizado pela fonte).
+  - nome: nome_representante
+    tipo: texto
+    descricao: Nome do representante legal.
+  - nome: qualificacao_representante_legal
+    tipo: texto
+    dominio: qualificacao
+    descricao: Código da qualificação do representante legal.
+  - nome: faixa_etaria
+    tipo: texto
+    dominio: faixa_etaria
+    descricao: Código da faixa etária do sócio.
+
+dominios:
+  identificador_socio:
+    tipo: literal
+    valores:
+      "1": Pessoa jurídica
+      "2": Pessoa física
+      "3": Estrangeiro
+    coluna_descricao: identificador_socio_descricao
+  faixa_etaria:
+    tipo: literal
+    valores:
+      "0": Não se aplica
+      "1": 0 a 12 anos
+      "2": 13 a 20 anos
+      "3": 21 a 30 anos
+      "4": 31 a 40 anos
+      "5": 41 a 50 anos
+      "6": 51 a 60 anos
+      "7": 61 a 70 anos
+      "8": 71 a 80 anos
+      "9": Maiores de 80 anos
+    coluna_descricao: faixa_etaria_descricao
+  qualificacao:
+    tipo: referencia
+    tabela: {fonte: rfb, base: cnpj, entidade: qualificacoes}
+    coluna: codigo
+  pais:
+    tipo: referencia
+    tabela: {fonte: rfb, base: cnpj, entidade: paises}
+    coluna: codigo
+
+acoes_padrao:
+  linha_malformada: QUARENTENA_E_ALERTA
+  nulidade: QUARENTENA
+  conversao: QUARENTENA_E_ALERTA
+  chave_nula: QUARENTENA
+  chave_duplicada: QUARENTENA_GRUPO
+  dominio: QUARENTENA_E_ALERTA
+
+documentacao:
+  estado: PROVISORIO_DOCUMENTAL
+  fonte_documental: Novo layout dos dados abertos do CNPJ (dez/2021), tabela SÓCIOS.
+  pendencias:
+    - descricao: Arquivo sem cabeçalho; confirmar ordem e quantidade de colunas no arquivo real.
+      impede: VALIDADO_FISICO
+    - descricao: Confirmar codificação ISO-8859-1, separador ';' e aspas duplas.
+      impede: VALIDADO_FISICO
+    - descricao: Não há chave declarada; avaliar unicidade com evidência física.
+      impede: APROVADO

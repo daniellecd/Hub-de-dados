@@ -1,0 +1,65 @@
+# Contrato da entidade totais (arquivo CNO_TOTAIS.CSV): totais de registros
+# publicados pela própria Receita. Serve de medida independente na
+# reconciliação das demais entidades da base.
+formato_contrato: 1
+
+identidade:
+  fonte: rfb
+  base: cno
+  entidade: totais
+
+versao: 1
+descricao: Totais de registros dos arquivos do CNO, publicados pela própria fonte.
+
+selecao:
+  arquivo: cno_totais.csv
+  quantidade_partes: 1
+
+leitura:
+  separador: ","
+  aspas: '"'
+  escape: '"'
+  codificacao: utf-8
+  cabecalho: true
+  tolerancia_malformadas: 0.0
+
+transformacoes_padrao:
+  - aparar
+  - vazio_como_nulo
+
+colunas:
+  - nome: total_obras
+    cabecalho: Total de obras
+    tipo: inteiro_longo
+    nulavel: false
+    descricao: Total de registros do arquivo CNO.CSV.
+  - nome: total_cnaes
+    cabecalho: Total de cnaes
+    tipo: inteiro_longo
+    nulavel: false
+    descricao: Total de registros do arquivo CNO_CNAES.CSV.
+  - nome: total_areas
+    cabecalho: Total de áreas
+    tipo: inteiro_longo
+    nulavel: false
+    descricao: Total de registros do arquivo CNO_AREAS.CSV.
+  - nome: total_vinculos
+    cabecalho: Total de vínculos
+    tipo: inteiro_longo
+    nulavel: false
+    descricao: Total de registros do arquivo CNO_VINCULOS.CSV.
+
+acoes_padrao:
+  linha_malformada: BLOQUEIA_PUBLICACAO
+  nulidade: BLOQUEIA_PUBLICACAO
+  conversao: BLOQUEIA_PUBLICACAO
+  chave_nula: BLOQUEIA_PUBLICACAO
+  chave_duplicada: BLOQUEIA_PUBLICACAO
+  dominio: BLOQUEIA_PUBLICACAO
+
+documentacao:
+  estado: PROVISORIO_DOCUMENTAL
+  fonte_documental: CNO - Cadastro Nacional de Obras, layout do arquivo CNO_TOTAIS.CSV (Receita Federal).
+  pendencias:
+    - descricao: Confirmar dialeto, codificação e nomes do cabeçalho no arquivo real.
+      impede: VALIDADO_FISICO

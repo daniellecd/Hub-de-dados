@@ -1,0 +1,54 @@
+# Descritor da base CNPJ (dados abertos do Cadastro Nacional da Pessoa
+# Jurídica) da Receita Federal. Publicação mensal em pasta AAAA-MM.
+formato_base: 1
+identidade:
+  fonte: rfb
+  base: cnpj
+descricao: >-
+  Dados abertos do CNPJ: empresas, estabelecimentos, sócios, opção pelo
+  Simples/MEI e tabelas de domínio (CNAE, município, natureza jurídica,
+  país, qualificação e motivo de situação cadastral).
+aquisicao:
+  url_base: https://arquivos.receitafederal.gov.br/dados/cnpj/dados_abertos_cnpj/{competencia}/
+  arquivos:
+    - Cnaes.zip
+    - Empresas0.zip
+    - Empresas1.zip
+    - Empresas2.zip
+    - Empresas3.zip
+    - Empresas4.zip
+    - Empresas5.zip
+    - Empresas6.zip
+    - Empresas7.zip
+    - Empresas8.zip
+    - Empresas9.zip
+    - Estabelecimentos0.zip
+    - Estabelecimentos1.zip
+    - Estabelecimentos2.zip
+    - Estabelecimentos3.zip
+    - Estabelecimentos4.zip
+    - Estabelecimentos5.zip
+    - Estabelecimentos6.zip
+    - Estabelecimentos7.zip
+    - Estabelecimentos8.zip
+    - Estabelecimentos9.zip
+    - Motivos.zip
+    - Municipios.zip
+    - Naturezas.zip
+    - Paises.zip
+    - Qualificacoes.zip
+    - Simples.zip
+    - Socios0.zip
+    - Socios1.zip
+    - Socios2.zip
+    - Socios3.zip
+    - Socios4.zip
+    - Socios5.zip
+    - Socios6.zip
+    - Socios7.zip
+    - Socios8.zip
+    - Socios9.zip
+documentacao:
+  fonte_documental: Novo layout dos dados abertos do CNPJ (dez/2021), Receita Federal.
+  pendencias:
+    - Confirmar a URL vigente e a lista de arquivos da publicação mensal.

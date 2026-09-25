@@ -1,0 +1,18 @@
+# Descritor da base CNO (Cadastro Nacional de Obras) da Receita Federal.
+# Um único ZIP alimenta as cinco entidades da base.
+formato_base: 1
+identidade:
+  fonte: rfb
+  base: cno
+descricao: >-
+  Cadastro Nacional de Obras (CNO): obras de construção civil, atividades
+  econômicas, vínculos de responsáveis, áreas e totais de controle.
+aquisicao:
+  url_base: https://arquivos.receitafederal.gov.br/dados/cno/
+  arquivos:
+    - cno.zip
+documentacao:
+  fonte_documental: CNO - Cadastro Nacional de Obras, layout dos dados abertos (Receita Federal).
+  pendencias:
+    - Confirmar a URL vigente de publicação do arquivo cno.zip.
+    - A URL não identifica a competência; a competência é o rótulo informado na aquisição.

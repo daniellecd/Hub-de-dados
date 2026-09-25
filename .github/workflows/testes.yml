@@ -1,0 +1,20 @@
+name: testes
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  suite-local:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Dependências de desenvolvimento
+        run: pip install -r requirements-dev.txt
+      - name: Suíte local sem Spark
+        run: python -m unittest discover -s testes -t . -v
+      - name: Notebooks reproduzidos byte a byte em clone limpo
+        run: python ferramentas/gerar_notebooks.py --verificar

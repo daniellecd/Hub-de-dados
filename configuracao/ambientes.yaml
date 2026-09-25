@@ -1,0 +1,30 @@
+# Configuração de ambiente: traduz identidade lógica em nome físico.
+#
+# DEV, HML e PROD são workspaces distintos com um Lakehouse de mesmo nome
+# (schemas habilitados). O nome do objeto é igual nos três; o ambiente
+# resolve apenas o schema de cada camada e a raiz de caminho.
+# Nenhum identificador de tenant (GUID) é versionado aqui.
+formato_configuracao: 1
+lakehouse: lh_hub
+ambientes:
+  dev:
+    schemas:
+      bronze: bronze
+      silver: silver
+      controle: controle
+    raiz_raw: Files/raw
+    montagem_local: /lakehouse/default
+  hml:
+    schemas:
+      bronze: bronze
+      silver: silver
+      controle: controle
+    raiz_raw: Files/raw
+    montagem_local: /lakehouse/default
+  prod:
+    schemas:
+      bronze: bronze
+      silver: silver
+      controle: controle
+    raiz_raw: Files/raw
+    montagem_local: /lakehouse/default

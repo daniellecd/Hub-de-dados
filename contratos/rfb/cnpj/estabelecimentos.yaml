@@ -1,0 +1,209 @@
+# Contrato da entidade estabelecimentos (arquivos *.ESTABELE, dez partes).
+formato_contrato: 1
+
+identidade:
+  fonte: rfb
+  base: cnpj
+  entidade: estabelecimentos
+
+versao: 1
+descricao: Estabelecimentos (matriz e filiais) com situação cadastral, atividade e endereço.
+
+selecao:
+  arquivo: "*.ESTABELE"
+  quantidade_partes: 10
+
+leitura:
+  separador: ";"
+  aspas: '"'
+  escape: '"'
+  codificacao: iso-8859-1
+  cabecalho: false
+  tolerancia_malformadas: 0.0001
+
+transformacoes_padrao:
+  - aparar
+  - vazio_como_nulo
+
+colunas:
+  - nome: cnpj_basico
+    tipo: texto
+    nulavel: false
+    descricao: Número base de inscrição no CNPJ (oito primeiros dígitos).
+  - nome: cnpj_ordem
+    tipo: texto
+    nulavel: false
+    descricao: Número do estabelecimento (nono ao décimo segundo dígito do CNPJ).
+  - nome: cnpj_dv
+    tipo: texto
+    nulavel: false
+    descricao: Dígito verificador do CNPJ (dois últimos dígitos).
+  - nome: identificador_matriz_filial
+    tipo: texto
+    dominio: matriz_filial
+    descricao: Código do identificador matriz/filial.
+  - nome: nome_fantasia
+    tipo: texto
+    descricao: Nome fantasia.
+  - nome: situacao_cadastral
+    tipo: texto
+    transformacoes:
+      - preencher_esquerda: {tamanho: 2, caractere: "0"}
+    dominio: situacao_cadastral
+    descricao: Código da situação cadastral.
+  - nome: data_situacao_cadastral
+    tipo: data
+    formato: AAAAMMDD
+    transformacoes:
+      - nulo_se: {valores: ["0", "00000000"]}
+    descricao: Data do evento da situação cadastral.
+  - nome: motivo_situacao_cadastral
+    tipo: texto
+    dominio: motivo_situacao
+    descricao: Código do motivo da situação cadastral.
+  - nome: nome_cidade_exterior
+    tipo: texto
+    descricao: Nome da cidade no exterior.
+  - nome: pais
+    tipo: texto
+    dominio: pais
+    descricao: Código do país.
+  - nome: data_inicio_atividade
+    tipo: data
+    formato: AAAAMMDD
+    transformacoes:
+      - nulo_se: {valores: ["0", "00000000"]}
+    descricao: Data de início da atividade.
+  - nome: cnae_fiscal_principal
+    tipo: texto
+    dominio: cnae
+    descricao: Código da atividade econômica principal.
+  - nome: cnae_fiscal_secundaria
+    tipo: texto
+    descricao: >-
+      Códigos das atividades econômicas secundárias, separados por vírgula
+      (mantidos como texto; tipos complexos não são publicados).
+  - nome: tipo_logradouro
+    tipo: texto
+    descricao: Descrição do tipo de logradouro.
+  - nome: logradouro
+    tipo: texto
+    descricao: Nome do logradouro do estabelecimento.
+  - nome: numero
+    tipo: texto
+    descricao: Número do endereço; 'S/N' quando não há número.
+  - nome: complemento
+    tipo: texto
+    descricao: Complemento do endereço.
+  - nome: bairro
+    tipo: texto
+    descricao: Bairro do estabelecimento.
+  - nome: cep
+    tipo: texto
+    descricao: CEP do logradouro do estabelecimento.
+  - nome: uf
+    tipo: texto
+    descricao: Sigla da unidade da federação.
+  - nome: municipio
+    tipo: texto
+    dominio: municipio
+    descricao: Código do município de jurisdição (tabela da Receita, não IBGE).
+  - nome: ddd_1
+    tipo: texto
+    descricao: DDD do telefone 1.
+  - nome: telefone_1
+    tipo: texto
+    descricao: Número do telefone 1.
+  - nome: ddd_2
+    tipo: texto
+    descricao: DDD do telefone 2.
+  - nome: telefone_2
+    tipo: texto
+    descricao: Número do telefone 2.
+  - nome: ddd_fax
+    tipo: texto
+    descricao: DDD do fax.
+  - nome: fax
+    tipo: texto
+    descricao: Número do fax.
+  - nome: correio_eletronico
+    tipo: texto
+    descricao: E-mail do contribuinte.
+  - nome: situacao_especial
+    tipo: texto
+    descricao: Situação especial da empresa.
+  - nome: data_situacao_especial
+    tipo: data
+    formato: AAAAMMDD
+    transformacoes:
+      - nulo_se: {valores: ["0", "00000000"]}
+    descricao: Data em que a empresa entrou em situação especial.
+
+chave: [cnpj_basico, cnpj_ordem, cnpj_dv]
+
+dominios:
+  matriz_filial:
+    tipo: literal
+    valores:
+      "1": Matriz
+      "2": Filial
+    coluna_descricao: identificador_matriz_filial_descricao
+  situacao_cadastral:
+    tipo: literal
+    valores:
+      "01": Nula
+      "02": Ativa
+      "03": Suspensa
+      "04": Inapta
+      "08": Baixada
+    coluna_descricao: situacao_cadastral_descricao
+  motivo_situacao:
+    tipo: referencia
+    tabela: {fonte: rfb, base: cnpj, entidade: motivos}
+    coluna: codigo
+  pais:
+    tipo: referencia
+    tabela: {fonte: rfb, base: cnpj, entidade: paises}
+    coluna: codigo
+  cnae:
+    tipo: referencia
+    tabela: {fonte: rfb, base: cnpj, entidade: cnaes}
+    coluna: codigo
+  municipio:
+    tipo: referencia
+    tabela: {fonte: rfb, base: cnpj, entidade: municipios}
+    coluna: codigo
+
+regras:
+  - id: cnpj_completo_com_14_digitos
+    descricao: CNPJ básico, ordem e DV somam 14 dígitos (8 + 4 + 2).
+    dimensao: Conformity
+    expressao: >-
+      regexp_like(cnpj_basico, '^[0-9]{8}$')
+      AND regexp_like(cnpj_ordem, '^[0-9]{4}$')
+      AND regexp_like(cnpj_dv, '^[0-9]{2}$')
+    colunas_referenciadas: [cnpj_basico, cnpj_ordem, cnpj_dv]
+    acao: QUARENTENA_E_ALERTA
+
+acoes_padrao:
+  linha_malformada: QUARENTENA_E_ALERTA
+  nulidade: QUARENTENA
+  conversao: QUARENTENA_E_ALERTA
+  chave_nula: QUARENTENA
+  chave_duplicada: QUARENTENA_GRUPO
+  dominio: QUARENTENA_E_ALERTA
+
+documentacao:
+  estado: PROVISORIO_DOCUMENTAL
+  fonte_documental: Novo layout dos dados abertos do CNPJ (dez/2021), tabela ESTABELECIMENTOS.
+  pendencias:
+    - descricao: Arquivo sem cabeçalho; confirmar ordem e quantidade de colunas no arquivo real.
+      impede: VALIDADO_FISICO
+    - descricao: Confirmar codificação ISO-8859-1, separador ';' e aspas duplas.
+      impede: VALIDADO_FISICO
+    - descricao: >-
+        O layout lista a situação cadastral como 01, 2, 3, 4 e 08; o contrato
+        normaliza para dois dígitos. Confirmar no arquivo.
+      impede: VALIDADO_FISICO
+    - descricao: Datas nulas como '0' ou '00000000' não constam do layout; confirmar.
+      impede: VALIDADO_FISICO

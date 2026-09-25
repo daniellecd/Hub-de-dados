@@ -1,0 +1,55 @@
+# Contrato da tabela de domínio municipios (arquivo *.MUNICCSV, parte única).
+formato_contrato: 1
+
+identidade:
+  fonte: rfb
+  base: cnpj
+  entidade: municipios
+
+versao: 1
+descricao: Tabela de municípios da Receita Federal (códigos TOM/SIAFI, não IBGE).
+
+selecao:
+  arquivo: "*.MUNICCSV"
+  quantidade_partes: 1
+
+leitura:
+  separador: ";"
+  aspas: '"'
+  escape: '"'
+  codificacao: iso-8859-1
+  cabecalho: false
+  tolerancia_malformadas: 0.0
+
+transformacoes_padrao:
+  - aparar
+  - vazio_como_nulo
+
+colunas:
+  - nome: codigo
+    tipo: texto
+    nulavel: false
+    descricao: Código do município na tabela da Receita.
+  - nome: descricao
+    tipo: texto
+    nulavel: false
+    descricao: Nome do município.
+
+chave: [codigo]
+
+acoes_padrao:
+  linha_malformada: BLOQUEIA_PUBLICACAO
+  nulidade: QUARENTENA_E_ALERTA
+  conversao: QUARENTENA_E_ALERTA
+  chave_nula: QUARENTENA_E_ALERTA
+  chave_duplicada: QUARENTENA_GRUPO
+  dominio: QUARENTENA_E_ALERTA
+
+documentacao:
+  estado: PROVISORIO_DOCUMENTAL
+  fonte_documental: Novo layout dos dados abertos do CNPJ (dez/2021), tabela de domínio MUNICÍPIOS.
+  pendencias:
+    - descricao: Arquivo sem cabeçalho; confirmar as duas colunas, a codificação e o dialeto no arquivo real.
+      impede: VALIDADO_FISICO
+    - descricao: Confirmar o nome físico do arquivo (padrão *.MUNICCSV).
+      impede: VALIDADO_FISICO

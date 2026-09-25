@@ -1,0 +1,80 @@
+# Contrato da entidade cnaes (arquivo CNO_CNAES.CSV): atividades
+# econômicas registradas para cada obra.
+formato_contrato: 1
+
+identidade:
+  fonte: rfb
+  base: cno
+  entidade: cnaes
+
+versao: 1
+descricao: Atividades econômicas (CNAE) registradas para cada obra do CNO.
+
+selecao:
+  arquivo: cno_cnaes.csv
+  quantidade_partes: 1
+
+leitura:
+  separador: ","
+  aspas: '"'
+  escape: '"'
+  codificacao: utf-8
+  cabecalho: true
+  tolerancia_malformadas: 0.001
+
+reconciliacao:
+  total_declarado:
+    entidade: totais
+    coluna: total_cnaes
+
+transformacoes_padrao:
+  - aparar
+  - vazio_como_nulo
+
+colunas:
+  - nome: cno
+    cabecalho: CNO
+    tipo: texto
+    nulavel: false
+    transformacoes: [somente_digitos, vazio_como_nulo]
+    descricao: Número de inscrição da obra no CNO.
+  - nome: cnae
+    cabecalho: CNAE
+    tipo: texto
+    nulavel: false
+    transformacoes:
+      - somente_digitos
+      - vazio_como_nulo
+      - preencher_esquerda: {tamanho: 7, caractere: "0"}
+    dominio: cnae_rfb
+    descricao: Código CNAE (subclasse, 7 dígitos) da atividade da obra.
+  - nome: data_registro
+    cabecalho: Data de registro
+    tipo: data
+    formato: AAAA-MM-DD
+    descricao: Data de registro da atividade.
+
+chave: [cno, cnae]
+
+dominios:
+  cnae_rfb:
+    tipo: referencia
+    tabela: {fonte: rfb, base: cnpj, entidade: cnaes}
+    coluna: codigo
+
+acoes_padrao:
+  linha_malformada: QUARENTENA_E_ALERTA
+  nulidade: QUARENTENA
+  conversao: QUARENTENA_E_ALERTA
+  chave_nula: QUARENTENA
+  chave_duplicada: QUARENTENA_GRUPO
+  dominio: QUARENTENA_E_ALERTA
+
+documentacao:
+  estado: PROVISORIO_DOCUMENTAL
+  fonte_documental: CNO - Cadastro Nacional de Obras, layout do arquivo CNO_CNAES.CSV (Receita Federal).
+  pendencias:
+    - descricao: Confirmar dialeto, codificação e nomes do cabeçalho no arquivo real.
+      impede: VALIDADO_FISICO
+    - descricao: Confirmar se (cno, cnae) é único; a chave foi inferida do layout.
+      impede: VALIDADO_FISICO

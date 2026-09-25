@@ -1,0 +1,107 @@
+# Contrato da entidade empresas (arquivos *.EMPRECSV, dez partes).
+formato_contrato: 1
+
+identidade:
+  fonte: rfb
+  base: cnpj
+  entidade: empresas
+
+versao: 1
+descricao: Dados cadastrais da pessoa jurídica (nível CNPJ básico).
+
+selecao:
+  arquivo: "*.EMPRECSV"
+  quantidade_partes: 10
+
+leitura:
+  separador: ";"
+  aspas: '"'
+  escape: '"'
+  codificacao: iso-8859-1
+  cabecalho: false
+  tolerancia_malformadas: 0.0001
+
+transformacoes_padrao:
+  - aparar
+  - vazio_como_nulo
+
+colunas:
+  - nome: cnpj_basico
+    tipo: texto
+    nulavel: false
+    descricao: Número base de inscrição no CNPJ (oito primeiros dígitos).
+  - nome: razao_social
+    tipo: texto
+    descricao: Nome empresarial da pessoa jurídica.
+  - nome: natureza_juridica
+    tipo: texto
+    dominio: natureza_juridica
+    descricao: Código da natureza jurídica.
+  - nome: qualificacao_responsavel
+    tipo: texto
+    dominio: qualificacao
+    descricao: Qualificação da pessoa física responsável pela empresa.
+  - nome: capital_social
+    tipo: decimal
+    precisao: 18
+    escala: 2
+    separador_decimal: ","
+    descricao: Capital social da empresa.
+  - nome: porte_empresa
+    tipo: texto
+    transformacoes:
+      - preencher_esquerda: {tamanho: 2, caractere: "0"}
+    dominio: porte_empresa
+    descricao: Código do porte da empresa.
+  - nome: ente_federativo_responsavel
+    tipo: texto
+    descricao: >-
+      Ente federativo responsável, preenchido para órgãos e entidades do
+      grupo de natureza jurídica 1XXX.
+
+chave: [cnpj_basico]
+
+dominios:
+  porte_empresa:
+    tipo: literal
+    valores:
+      "00": Não informado
+      "01": Micro empresa
+      "03": Empresa de pequeno porte
+      "05": Demais
+    coluna_descricao: porte_empresa_descricao
+  natureza_juridica:
+    tipo: referencia
+    tabela: {fonte: rfb, base: cnpj, entidade: naturezas}
+    coluna: codigo
+  qualificacao:
+    tipo: referencia
+    tabela: {fonte: rfb, base: cnpj, entidade: qualificacoes}
+    coluna: codigo
+
+regras:
+  - id: cnpj_basico_com_8_digitos
+    descricao: O CNPJ básico tem oito dígitos.
+    dimensao: Conformity
+    expressao: regexp_like(cnpj_basico, '^[0-9]{8}$')
+    colunas_referenciadas: [cnpj_basico]
+    acao: QUARENTENA_E_ALERTA
+
+acoes_padrao:
+  linha_malformada: QUARENTENA_E_ALERTA
+  nulidade: QUARENTENA
+  conversao: QUARENTENA_E_ALERTA
+  chave_nula: QUARENTENA
+  chave_duplicada: QUARENTENA_GRUPO
+  dominio: QUARENTENA_E_ALERTA
+
+documentacao:
+  estado: PROVISORIO_DOCUMENTAL
+  fonte_documental: Novo layout dos dados abertos do CNPJ (dez/2021), tabela EMPRESAS.
+  pendencias:
+    - descricao: Arquivo sem cabeçalho; confirmar ordem e quantidade de colunas no arquivo real.
+      impede: VALIDADO_FISICO
+    - descricao: Confirmar codificação ISO-8859-1, separador ';' e aspas duplas.
+      impede: VALIDADO_FISICO
+    - descricao: Capital social com vírgula decimal não consta do layout; confirmar.
+      impede: VALIDADO_FISICO

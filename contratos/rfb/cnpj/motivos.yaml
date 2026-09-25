@@ -1,0 +1,57 @@
+# Contrato da tabela de domínio motivos (arquivo *.MOTICSV, parte única).
+formato_contrato: 1
+
+identidade:
+  fonte: rfb
+  base: cnpj
+  entidade: motivos
+
+versao: 1
+descricao: Tabela de motivos de situação cadastral da Receita Federal.
+
+selecao:
+  arquivo: "*.MOTICSV"
+  quantidade_partes: 1
+
+leitura:
+  separador: ";"
+  aspas: '"'
+  escape: '"'
+  codificacao: iso-8859-1
+  cabecalho: false
+  tolerancia_malformadas: 0.0
+
+transformacoes_padrao:
+  - aparar
+  - vazio_como_nulo
+
+colunas:
+  - nome: codigo
+    tipo: texto
+    nulavel: false
+    descricao: Código do motivo da situação cadastral.
+  - nome: descricao
+    tipo: texto
+    nulavel: false
+    descricao: Descrição do motivo da situação cadastral.
+
+chave: [codigo]
+
+acoes_padrao:
+  linha_malformada: BLOQUEIA_PUBLICACAO
+  nulidade: QUARENTENA_E_ALERTA
+  conversao: QUARENTENA_E_ALERTA
+  chave_nula: QUARENTENA_E_ALERTA
+  chave_duplicada: QUARENTENA_GRUPO
+  dominio: QUARENTENA_E_ALERTA
+
+documentacao:
+  estado: PROVISORIO_DOCUMENTAL
+  fonte_documental: Publicação mensal do CNPJ (arquivo Motivos.zip); a tabela não consta do layout oficial.
+  pendencias:
+    - descricao: Arquivo sem cabeçalho; confirmar as duas colunas, a codificação e o dialeto no arquivo real.
+      impede: VALIDADO_FISICO
+    - descricao: Confirmar o nome físico do arquivo (padrão *.MOTICSV).
+      impede: VALIDADO_FISICO
+    - descricao: Tabela ausente do layout oficial; a estrutura foi declarada a partir da publicação.
+      impede: VALIDADO_FISICO

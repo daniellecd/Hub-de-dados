@@ -1,0 +1,146 @@
+# Contrato da entidade areas (arquivo CNO_AREAS.CSV): áreas de cada obra
+# por categoria, destinação e tipo.
+formato_contrato: 1
+
+identidade:
+  fonte: rfb
+  base: cno
+  entidade: areas
+
+versao: 1
+descricao: Áreas de cada obra do CNO por categoria, destinação, tipo de obra e tipo de área.
+
+selecao:
+  arquivo: cno_areas.csv
+  quantidade_partes: 1
+
+leitura:
+  separador: ","
+  aspas: '"'
+  escape: '"'
+  codificacao: utf-8
+  cabecalho: true
+  tolerancia_malformadas: 0.001
+
+reconciliacao:
+  total_declarado:
+    entidade: totais
+    coluna: total_areas
+
+transformacoes_padrao:
+  - aparar
+  - vazio_como_nulo
+
+colunas:
+  - nome: cno
+    cabecalho: CNO
+    tipo: texto
+    nulavel: false
+    transformacoes: [somente_digitos, vazio_como_nulo]
+    descricao: Número de inscrição da obra no CNO.
+  - nome: categoria
+    cabecalho: Categoria
+    tipo: texto
+    dominio: categoria_area
+    descricao: Categoria da área.
+  - nome: destinacao
+    cabecalho: Destinação
+    tipo: texto
+    dominio: destinacao_area
+    descricao: Destinação da área.
+  - nome: tipo_obra
+    cabecalho: Tipo de Obra
+    tipo: texto
+    dominio: tipo_obra
+    descricao: Tipo de construção da obra.
+  - nome: tipo_area
+    cabecalho: Tipo de Area
+    tipo: texto
+    dominio: tipo_area
+    descricao: Tipo da área (principal ou complementar).
+  - nome: tipo_area_complementar
+    cabecalho: Tipo de Área Complementar
+    tipo: texto
+    dominio: tipo_area_complementar
+    descricao: Tipo da área complementar.
+  - nome: metragem
+    cabecalho: Metragem
+    tipo: decimal
+    precisao: 22
+    escala: 2
+    separador_decimal: "."
+    descricao: Metragem da área.
+
+dominios:
+  categoria_area:
+    tipo: literal
+    valores:
+      "0": Obra Nova
+      "1": Acréscimo
+      "2": Reforma
+      "3": Demolição
+      "4": Existente
+    coluna_descricao: categoria_descricao
+  destinacao_area:
+    tipo: literal
+    valores:
+      "0": Residencial unifamiliar
+      "1": Residencial multifamiliar
+      "2": Comercial salas e lojas
+      "3": Edifício de Garagens
+      "4": Galpão industrial
+      "5": Casa popular
+      "6": Conjunto habitacional popular
+    coluna_descricao: destinacao_descricao
+  tipo_obra:
+    tipo: literal
+    valores:
+      "0": Alvenaria
+      "1": Madeira
+      "2": Mista
+    coluna_descricao: tipo_obra_descricao
+  tipo_area:
+    tipo: literal
+    valores:
+      "P": Principal
+      "C": Complementar
+    coluna_descricao: tipo_area_descricao
+  tipo_area_complementar:
+    tipo: literal
+    valores:
+      "0": Quadra Esportiva e Poliesportiva
+      "1": Estacionamento Térreo
+      "2": Piscina
+      "3": Área Complementar do Posto de Gasolina
+    coluna_descricao: tipo_area_complementar_descricao
+
+regras:
+  - id: metragem_nao_negativa
+    descricao: A metragem não pode ser negativa.
+    dimensao: Accuracy
+    expressao: metragem IS NULL OR metragem >= 0
+    colunas_referenciadas: [metragem]
+    acao: ALERTA
+
+acoes_padrao:
+  linha_malformada: QUARENTENA_E_ALERTA
+  nulidade: QUARENTENA
+  conversao: QUARENTENA_E_ALERTA
+  chave_nula: QUARENTENA
+  chave_duplicada: QUARENTENA_GRUPO
+  # Provisório: o layout declara os campos codificados como texto de
+  # tamanho 150; o arquivo pode trazer a descrição em vez do código.
+  dominio: ALERTA
+
+documentacao:
+  estado: PROVISORIO_DOCUMENTAL
+  fonte_documental: CNO - Cadastro Nacional de Obras, layout do arquivo CNO_AREAS.CSV (Receita Federal).
+  pendencias:
+    - descricao: Confirmar dialeto, codificação e nomes do cabeçalho no arquivo real.
+      impede: VALIDADO_FISICO
+    - descricao: >-
+        Campos codificados têm tamanho 150 no layout; confirmar se o arquivo
+        traz código ou descrição e revisar a ação de domínio (hoje ALERTA).
+      impede: VALIDADO_FISICO
+    - descricao: Confirmar separador decimal e escala da metragem.
+      impede: VALIDADO_FISICO

@@ -1,0 +1,92 @@
+# Contrato da entidade simples (arquivo *SIMPLES.CSV*, parte única).
+formato_contrato: 1
+
+identidade:
+  fonte: rfb
+  base: cnpj
+  entidade: simples
+
+versao: 1
+descricao: Opção e exclusão do Simples Nacional e do MEI por CNPJ básico.
+
+selecao:
+  arquivo: "*SIMPLES.CSV*"
+  quantidade_partes: 1
+
+leitura:
+  separador: ";"
+  aspas: '"'
+  escape: '"'
+  codificacao: iso-8859-1
+  cabecalho: false
+  tolerancia_malformadas: 0.0001
+
+transformacoes_padrao:
+  - aparar
+  - vazio_como_nulo
+
+colunas:
+  - nome: cnpj_basico
+    tipo: texto
+    nulavel: false
+    descricao: Número base de inscrição no CNPJ.
+  - nome: opcao_simples
+    tipo: texto
+    transformacoes: [maiusculas]
+    dominio: sim_nao
+    descricao: Indicador da opção pelo Simples (S ou N; em branco, outros).
+  - nome: data_opcao_simples
+    tipo: data
+    formato: AAAAMMDD
+    transformacoes:
+      - nulo_se: {valores: ["0", "00000000"]}
+    descricao: Data de opção pelo Simples.
+  - nome: data_exclusao_simples
+    tipo: data
+    formato: AAAAMMDD
+    transformacoes:
+      - nulo_se: {valores: ["0", "00000000"]}
+    descricao: Data de exclusão do Simples.
+  - nome: opcao_mei
+    tipo: texto
+    transformacoes: [maiusculas]
+    dominio: sim_nao
+    descricao: Indicador da opção pelo MEI (S ou N; em branco, outros).
+  - nome: data_opcao_mei
+    tipo: data
+    formato: AAAAMMDD
+    transformacoes:
+      - nulo_se: {valores: ["0", "00000000"]}
+    descricao: Data de opção pelo MEI.
+  - nome: data_exclusao_mei
+    tipo: data
+    formato: AAAAMMDD
+    transformacoes:
+      - nulo_se: {valores: ["0", "00000000"]}
+    descricao: Data de exclusão do MEI.
+
+chave: [cnpj_basico]
+
+dominios:
+  sim_nao:
+    tipo: literal
+    valores:
+      "S": Sim
+      "N": Não
+
+acoes_padrao:
+  linha_malformada: QUARENTENA_E_ALERTA
+  nulidade: QUARENTENA
+  conversao: QUARENTENA_E_ALERTA
+  chave_nula: QUARENTENA
+  chave_duplicada: QUARENTENA_GRUPO
+  dominio: QUARENTENA_E_ALERTA
+
+documentacao:
+  estado: PROVISORIO_DOCUMENTAL
+  fonte_documental: Novo layout dos dados abertos do CNPJ (dez/2021), tabela DADOS DO SIMPLES.
+  pendencias:
+    - descricao: Arquivo sem cabeçalho; confirmar ordem e quantidade de colunas no arquivo real.
+      impede: VALIDADO_FISICO
+    - descricao: Confirmar o nome físico do arquivo (padrão *SIMPLES.CSV*).
+      impede: VALIDADO_FISICO
